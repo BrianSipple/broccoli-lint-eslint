@@ -20,22 +20,19 @@ describe('Supporting different config file formats', function describeMultipleFo
 
   return Promise.all(formats.map((format) => {
 
-    return new Promise((resolve) => {
+    it(`detects configuration files with the ${format} file type`, function configFileTypeSupport(done) {
+      const filesPath = path.join(process.cwd(), 'test/file-format-tests/formats', format);
 
-      it(`detects configuration files with the ${format} file type`, function configFileTypeSupport(done) {
-        const filesPath = path.join(process.cwd(), 'test/file-format-tests/formats', format);
+      const promise = runEslint(filesPath, {
+        options: {
+          ignore: false
+        }
+      });
 
-        const promise = runEslint(filesPath, {
-          options: {
-            ignore: false
-          }
-        });
-
-        return promise.then(function assertLinting({buildLog}) {
-          expect(buildLog, 'Reported erroroneous single-quoted strings').to.have.string(MESSAGES.DOUBLEQUOTE);
-          expect(buildLog, 'Reported erroroneous use of alert').to.have.string(MESSAGES.ALERT);
-          done();
-        });
+      return promise.then(function assertLinting({buildLog}) {
+        expect(buildLog, 'Reported erroroneous single-quoted strings').to.have.string(MESSAGES.DOUBLEQUOTE);
+        expect(buildLog, 'Reported erroroneous use of alert').to.have.string(MESSAGES.ALERT);
+        done();
       });
     });
   }));
